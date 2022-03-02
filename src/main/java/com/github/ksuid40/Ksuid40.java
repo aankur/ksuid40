@@ -1,5 +1,6 @@
 package com.github.ksuid40;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -20,7 +21,7 @@ import static com.github.ksuid40.Hex.hexEncode;
  * See <a href="https://github.com/segmentio/ksuid">https://github.com/segmentio/ksuid</a>.
  */
 @SuppressWarnings("WeakerAccess")
-public class Ksuid40 implements Comparable<Ksuid40> {
+public class Ksuid40 implements Serializable, Comparable<Ksuid40> {
     static final int EPOCH = 0;
     public static final int PAYLOAD_BYTES = 16;
     public static final int LONG_SIZE_BYTES = 8;
