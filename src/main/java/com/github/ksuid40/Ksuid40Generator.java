@@ -1,40 +1,40 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.Random;
 import java.util.function.Supplier;
 
-import static com.github.ksuid.Ksuid.EPOCH;
-import static com.github.ksuid.Ksuid.PAYLOAD_BYTES;
+import static com.github.ksuid40.Ksuid40.EPOCH;
+import static com.github.ksuid40.Ksuid40.PAYLOAD_BYTES;
 
 /**
  * Generate K-Sortable Globally Unique IDs (KSUID).
  * <p>
  * Unless otherwise noted, passing a {@code null} argument to a method of this class
- * will cause a {@link java.lang.NullPointerException NullPointerException} to be thrown.
+ * will cause a {@link NullPointerException NullPointerException} to be thrown.
  * <p>
  * See <a href="https://github.com/segmentio/ksuid">https://github.com/segmentio/ksuid</a>.
  */
 @SuppressWarnings("WeakerAccess")
-public class KsuidGenerator {
-    private static final KsuidGenerator INSTANCE = new KsuidGenerator(new SecureRandom());
+public class Ksuid40Generator {
+    private static final Ksuid40Generator INSTANCE = new Ksuid40Generator(new SecureRandom());
     
     private final Supplier<byte[]> payloadSupplier;
 
     /**
-     * Generate a new KSUID string representation
+     * Generate a new KSUID-40 string representation
      * 
-     * The {@code Ksuid} is generated using a cryptographically strong pseudo
+     * The {@code Ksuid40} is generated using a cryptographically strong pseudo
      * random number generator.
      *
-     * @return string representation of new KSUID
+     * @return string representation of new KSUID-40
      */
     public static String generate() {
         return createKsuid().toString();
     }
 
-    static Ksuid createKsuid() {
+    static Ksuid40 createKsuid() {
         return INSTANCE.newKsuid();
     }
 
@@ -43,7 +43,7 @@ public class KsuidGenerator {
      *
      * @param random source of random bytes for payload, SecureRandom is recommended
      */
-    public KsuidGenerator(final Random random) {
+    public Ksuid40Generator(final Random random) {
         this(() -> {
             final byte[] payload = new byte[PAYLOAD_BYTES];
             random.nextBytes(payload);
@@ -54,9 +54,9 @@ public class KsuidGenerator {
     /**
      * Construct a KSUID generator.
      *
-     * @param payloadSupplier supplier of byte arrays which must be {@link Ksuid#PAYLOAD_BYTES PAYLOAD_BYTES} in length
+     * @param payloadSupplier supplier of byte arrays which must be {@link Ksuid40#PAYLOAD_BYTES PAYLOAD_BYTES} in length
      */
-    public KsuidGenerator(final Supplier<byte[]> payloadSupplier) {
+    public Ksuid40Generator(final Supplier<byte[]> payloadSupplier) {
         if (payloadSupplier.get().length != PAYLOAD_BYTES) {
             throw new IllegalArgumentException("payloadBytesSupplier must supply byte arrays of length " + PAYLOAD_BYTES);
         }
@@ -70,7 +70,7 @@ public class KsuidGenerator {
      *
      * @return a Ksuid object
      */
-    public Ksuid newKsuid() {
+    public Ksuid40 newKsuid() {
         return newKsuid(Instant.now());
     }
 
@@ -80,9 +80,9 @@ public class KsuidGenerator {
      * @param instant an Instant from which to derive the timestamp component
      * @return a Ksuid object
      */
-    public Ksuid newKsuid(final Instant instant) {
-        return Ksuid.newBuilder()
-                    .withTimestamp((int) (instant.toEpochMilli() / 1000 - EPOCH)) // 4 bytes
+    public Ksuid40 newKsuid(final Instant instant) {
+        return Ksuid40.newBuilder()
+                    .withTimestamp((instant.getEpochSecond() - EPOCH)) // 5 bytes
                     .withPayload(payloadSupplier.get()) // 16 bytes
                     .build();
     }

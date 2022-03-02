@@ -1,10 +1,9 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
-import org.junit.Test;
-import org.junit.experimental.theories.DataPoint;
-import org.junit.experimental.theories.Theories;
-import org.junit.experimental.theories.Theory;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -13,28 +12,35 @@ import java.time.Instant;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Map.Entry;
 import java.util.Random;
+import java.util.stream.Stream;
 
-import static com.github.ksuid.Base62.BASE;
-import static com.github.ksuid.Base62.BASE_62_CHARACTERS;
-import static com.github.ksuid.Base62.base62Decode;
-import static com.github.ksuid.Base62.base62Encode;
+import static com.github.ksuid40.Base62.*;
 import static java.util.stream.IntStream.range;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-@RunWith(Theories.class)
 public class Base62Test {
-    @DataPoint
-    public static final Entry<byte[], String> P1 = new SimpleEntry<>(Hex.hexDecode("0669F7EFB5A1CD34B5F99D1154FB6853345C9735"), "ujtsYcgvSTl8PAuAdqWYSMnLOv");
-    @DataPoint
-    public static final Entry<byte[], String> P2 = new SimpleEntry<>(Hex.hexDecode("08499F6AD16FC62A85C3D9C376D121A5478BF798"), "1BJYSC0hh6mbTwDxT0L5c1SlTjM");
-    @DataPoint
-    public static final Entry<byte[], String> P3 = new SimpleEntry<>(Hex.hexDecode("066A029C73FC1AA3B2446246D6E89FCD909E8FE8"), "ujzPyRiIAffKhBux4PvQdDqMHY");
 
-    @Test(expected = InvocationTargetException.class)
-    public void utilityClass() throws Exception {
-        final Constructor<Base62> constructor = Base62.class.getDeclaredConstructor();
-        constructor.setAccessible(true);
-        constructor.newInstance();
+
+    public static final Entry<byte[], String> P1 = new SimpleEntry<>(Hex.hexDecode("0E9110E816D1D7403226FA924557DA9B3A0F4642"), "24rUCafWbTglyvWlQEuaxKqqiuY");
+    public static final Entry<byte[], String> P2 = new SimpleEntry<>(Hex.hexDecode("0E9110E8C3764DCE8A9C539F5F0D1BE0FCD49E8C"), "24rUCfvIRZ0PqLTVlmt7bCVHnCu");
+    public static final Entry<byte[], String> P3 = new SimpleEntry<>(Hex.hexDecode("0E9110E890F44EB7DAF786297B276912EB478BAE"), "24rUCeNzQ1KoETEDtwGE1wdazYk");
+
+    private static Stream<Arguments> rawByteProvider() {
+        return Stream.of(
+          Arguments.of(P1),
+          Arguments.of(P2),
+          Arguments.of(P3)
+        );
+    }
+
+    @Test
+    public void utilityClass() {
+        assertThrows(InvocationTargetException.class, () -> {
+            final Constructor<Base62> constructor = Base62.class.getDeclaredConstructor();
+            constructor.setAccessible(true);
+            constructor.newInstance();
+        });
     }
 
     @Test
@@ -56,48 +62,57 @@ public class Base62Test {
                 });
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void encodeNoPadding(final Entry<byte[], String> entry) {
         final String s = base62Encode(entry.getKey());
         assertThat(s).isEqualTo(entry.getValue());
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void encodeWithPadding(final Entry<byte[], String> entry) {
         final String s = base62Encode(entry.getKey(), entry.getValue().length() + 4);
         assertThat(s).isEqualTo("0000" + entry.getValue());
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void encodeWithSameLengthPadding(final Entry<byte[], String> entry) {
         final String s = base62Encode(entry.getKey(), entry.getValue().length());
         assertThat(s).isEqualTo(entry.getValue());
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void encodeWithPaddingToSmall(final Entry<byte[], String> entry) {
         final String s = base62Encode(entry.getKey(), entry.getValue().length() - 4);
         assertThat(s).isEqualTo(entry.getValue());
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void decode(final Entry<byte[], String> entry) {
         final byte[] bytes = base62Decode(entry.getValue());
         assertThat(bytes).isEqualTo(entry.getKey());
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void decodeWithPadding(final Entry<byte[], String> entry) {
         final byte[] bytes = base62Decode("0000" + entry.getValue());
         assertThat(bytes).isEqualTo(entry.getKey());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void decodeWithInvalidCharacters() {
-        base62Decode("01-AB*ab");
+        assertThrows(IllegalArgumentException.class, () -> {
+            base62Decode("01-AB*ab");
+        });
     }
 
-    @Theory
+    @ParameterizedTest
+    @MethodSource("rawByteProvider")
     public void encodeDecode(final Entry<byte[], String> entry) {
         assertThat(base62Decode(base62Encode(entry.getKey()))).isEqualTo(entry.getKey());
         assertThat(base62Decode(base62Encode(entry.getKey(), entry.getValue().length() + 4))).isEqualTo(entry.getKey());
@@ -109,8 +124,8 @@ public class Base62Test {
         random.setSeed(123L);
 
         final Instant timestamp = Instant.parse("2083-01-27T08:18:32.577Z");
-        final Ksuid ksuid = new KsuidGenerator(random).newKsuid(timestamp);
-        final byte[] ksuidBytes = ksuid.asBytes();
-        assertThat(Base62.base62Encode(ksuidBytes, 27)).isEqualTo("IRIRk6W1GtAY07Hp2RJ1blLjvEo");
+        final Ksuid40 ksuid40 = new Ksuid40Generator(random).newKsuid(timestamp);
+        final byte[] ksuidBytes = ksuid40.asBytes();
+        assertThat(Base62.base62Encode(ksuidBytes, 27)).isEqualTo("ULUyOmRbtzUsdIObKkJUTWQwB06");
     }
 }

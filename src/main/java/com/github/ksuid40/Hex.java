@@ -1,4 +1,4 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
 /**
  * Utility class to encode/decode bytes into hexadecimal strings.

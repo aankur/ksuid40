@@ -1,4 +1,4 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
 import java.math.BigInteger;
 import java.util.stream.IntStream;

@@ -1,8 +1,9 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.mockito.MockedConstruction;
 import org.mockito.Mockito;
 
@@ -24,16 +25,17 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNoException;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class MainTest {
 
     private static final TimeZone defaultTimeZone = TimeZone.getDefault();
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
-        TimeZone.setDefault(TimeZone.getTimeZone("America/Los_Angeles"));
+        TimeZone.setDefault(TimeZone.getTimeZone("UTC"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void afterClass() {
         TimeZone.setDefault(defaultTimeZone);
     }
@@ -57,45 +59,45 @@ public class MainTest {
     public void testGenerateOne() {
         final RunResult runResult = runMain();
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("24rUCafWbTglyvWlQEuaxKqqiuY\n");
+        assertThat(runResult.stdout).isEqualTo("0Dz40rGb7Ea16c6dXiXv3p5w2yfq\n");
     }
 
     @Test
     public void testGenerateThree() {
         final RunResult runResult = runMain("-n", "3");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("24rUCafWbTglyvWlQEuaxKqqiuY\n"
-                + "24rUCfvIRZ0PqLTVlmt7bCVHnCu\n"
-                + "24rUCeNzQ1KoETEDtwGE1wdazYk\n");
+        assertThat(runResult.stdout).isEqualTo("0Dz40rGb7Ea16c6dXiXv3p5w2yfq\n"
+                + "0Dz40rLqt4fKkTWaI45taSxaU2yC\n"
+                + "0Dz40rKJa37f8reL0CFGgthinFK2\n");
     }
 
     @Test
     public void testPositionalArgsNoFlags() {
-        final RunResult runResult = runMain("24rUCafWbTglyvWlQEuaxKqqiuY", "24rUCfvIRZ0PqLTVlmt7bCVHnCu");
+        final RunResult runResult = runMain("024rUCafWbTglyvWlQEuaxKqqiuY", "024rUCfvIRZ0PqLTVlmt7bCVHnCu");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("24rUCafWbTglyvWlQEuaxKqqiuY\n"
-                + "24rUCfvIRZ0PqLTVlmt7bCVHnCu\n");
+        assertThat(runResult.stdout).isEqualTo("024rUCafWbTglyvWlQEuaxKqqiuY\n"
+                + "024rUCfvIRZ0PqLTVlmt7bCVHnCu\n");
     }
 
     @Test
     public void testVerbose() {
-        final RunResult runResult = runMain("-v", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-v", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("24rUCafWbTglyvWlQEuaxKqqiuY: 24rUCafWbTglyvWlQEuaxKqqiuY\n");
+        assertThat(runResult.stdout).isEqualTo("024rUCafWbTglyvWlQEuaxKqqiuY: 024rUCafWbTglyvWlQEuaxKqqiuY\n");
     }
 
     @Test
     public void testInspect() {
-        final RunResult runResult = runMain("-f", "inspect", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "inspect", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
         assertThat(runResult.stdout).isEqualTo("REPRESENTATION:\n"
                 + "\n"
-                + "  String: 24rUCafWbTglyvWlQEuaxKqqiuY\n"
-                + "     Raw: 0E9110E816D1D7403226FA924557DA9B3A0F4642\n"
+                + "  String: 024rUCafWbTglyvWlQEuaxKqqiuY\n"
+                + "     Raw: 000E9110E816D1D7403226FA924557DA9B3A0F4642\n"
                 + "\n"
                 + "COMPONENTS:\n"
                 + "\n"
-                + "       Time: 2022-02-08 22:27:52 -0800 PST\n"
+                + "       Time: 1977-09-29 13:34:32 +0000 UTC\n"
                 + "  Timestamp: 244388072\n"
                 + "    Payload: 16D1D7403226FA924557DA9B3A0F4642\n"
                 + "\n"
@@ -104,21 +106,21 @@ public class MainTest {
 
     @Test
     public void testTime() {
-        final RunResult runResult = runMain("-f", "time", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "time", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("2022-02-08 22:27:52 -0800 PST\n");
+        assertThat(runResult.stdout).isEqualTo("1977-09-29 13:34:32 +0000 UTC\n");
     }
 
     @Test
     public void testTimestamp() {
-        final RunResult runResult = runMain("-f", "timestamp", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "timestamp", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
         assertThat(runResult.stdout).isEqualTo("244388072\n");
     }
 
     @Test
     public void testPayload() {
-        final RunResult runResult = runMain("-f", "payload", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "payload", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
         final String hex = Hex.hexEncode(runResult.stdout.getBytes(UTF_8));
         assertThat(hex).isEqualTo("16EFBFBDEFBFBD403226EFBFBDEFBFBD4557DA9B3A0F4642");
@@ -126,32 +128,32 @@ public class MainTest {
 
     @Test
     public void testRaw() {
-        final RunResult runResult = runMain("-f", "raw", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "raw", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
         final String hex = Hex.hexEncode(runResult.stdout.getBytes(UTF_8));
-        assertThat(hex).isEqualTo("0EEFBFBD10EFBFBD16EFBFBDEFBFBD403226EFBFBDEFBFBD4557DA9B3A0F4642");
+        assertThat(hex).isEqualTo("000EEFBFBD10EFBFBD16EFBFBDEFBFBD403226EFBFBDEFBFBD4557DA9B3A0F4642");
     }
 
     @Test
     public void testTemplate() {
         final String templateText = "string={{.String}} raw={{.Raw} time={{.Time}} timestamp={{.Timestamp} payload={{.Payload}}";
-        final RunResult runResult = runMain("-f", "template", "-t", templateText, "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "template", "-t", templateText, "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("string=24rUCafWbTglyvWlQEuaxKqqiuY raw={{.Raw} time=2022-02-08 22:27:52 -0800 PST "
+        assertThat(runResult.stdout).isEqualTo("string=024rUCafWbTglyvWlQEuaxKqqiuY raw={{.Raw} time=1977-09-29 13:34:32 +0000 UTC "
                 + "timestamp={{.Timestamp} payload=16D1D7403226FA924557DA9B3A0F4642\n"
                 + "");
     }
 
     @Test
     public void testTemplateNoText() {
-        final RunResult runResult = runMain("-f", "template", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "template", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
         assertThat(runResult.stdout).isEqualTo("\n");
     }
 
     @Test
     public void testBadFormattingFunction() {
-        final RunResult runResult = runMain("-f", "foo", "24rUCafWbTglyvWlQEuaxKqqiuY");
+        final RunResult runResult = runMain("-f", "foo", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isOne();
         assertThat(runResult.stdout).isEqualTo("Bad formatting function: foo\n"
                 + "Usage of ksuid:\n"

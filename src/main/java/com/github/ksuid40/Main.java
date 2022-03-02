@@ -1,4 +1,4 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
 import java.io.IOException;
 import java.io.PrintStream;
@@ -31,7 +31,7 @@ public final class Main {
     private final Random random;
     private final Clock clock;
     private final Flags flags = new Flags();
-    private final Map<String, Consumer<Ksuid>> printers;
+    private final Map<String, Consumer<Ksuid40>> printers;
 
     public static void main(final String... args) {
         final Main main = new Main(System.out, System::exit, new SecureRandom(), Clock.systemUTC());
@@ -66,22 +66,22 @@ public final class Main {
     private void tryRun(final String... args) {
         parseFlags(args);
 
-        final Consumer<Ksuid> printer = printers.get(flags.format);
+        final Consumer<Ksuid40> printer = printers.get(flags.format);
 
-        final List<Ksuid> ksuids = new ArrayList<>();
-        final KsuidGenerator ksuidGenerator = new KsuidGenerator(random);
+        final List<Ksuid40> ksuid40s = new ArrayList<>();
+        final Ksuid40Generator ksuid40Generator = new Ksuid40Generator(random);
         if (flags.positionalArguments.isEmpty()) {
             IntStream.range(0, flags.count)
                     .forEach(any -> {
                         final Instant now = Instant.now(clock);
-                        final Ksuid ksuid = ksuidGenerator.newKsuid(now);
-                        ksuids.add(ksuid);
+                        final Ksuid40 ksuid40 = ksuid40Generator.newKsuid(now);
+                        ksuid40s.add(ksuid40);
                     });
         }
 
-        flags.positionalArguments.forEach(arg -> ksuids.add(parse(arg)));
+        flags.positionalArguments.forEach(arg -> ksuid40s.add(parse(arg)));
 
-        ksuids.forEach(ksuid -> {
+        ksuid40s.forEach(ksuid -> {
             if (flags.verbose) {
                 printStream.printf("%s: ", ksuid);
             }
@@ -89,9 +89,9 @@ public final class Main {
         });
     }
 
-    private Ksuid parse(final String arg) {
+    private Ksuid40 parse(final String arg) {
         try {
-            return Ksuid.fromString(arg);
+            return Ksuid40.fromString(arg);
         } catch (final IllegalArgumentException e) {
             throw new CliException("Error when parsing \"" + arg + "\": Valid encoded KSUIDs are 27 characters");
         }
@@ -168,37 +168,37 @@ public final class Main {
         exit.accept(exitCode);
     }
 
-    private void printString(final Ksuid ksuid) {
-        printStream.println(ksuid);
+    private void printString(final Ksuid40 ksuid40) {
+        printStream.println(ksuid40);
     }
 
-    private void printInspect(final Ksuid ksuid) {
-        printStream.println(ksuid.toInspectString());
+    private void printInspect(final Ksuid40 ksuid40) {
+        printStream.println(ksuid40.toInspectString());
     }
 
-    private void printTime(final Ksuid ksuid) {
-        printStream.println(ksuid.getTime());
+    private void printTime(final Ksuid40 ksuid40) {
+        printStream.println(ksuid40.getTime());
     }
 
-    private void printTimestamp(final Ksuid ksuid) {
-        printStream.println(ksuid.getTimestamp());
+    private void printTimestamp(final Ksuid40 ksuid40) {
+        printStream.println(ksuid40.getTimestamp());
     }
 
-    private void printPayload(final Ksuid ksuid) {
-        printByteArray(ksuid.getPayload());
+    private void printPayload(final Ksuid40 ksuid40) {
+        printByteArray(ksuid40.getPayload());
     }
 
-    private void printRaw(final Ksuid ksuid) {
-        printByteArray(ksuid.asRaw());
+    private void printRaw(final Ksuid40 ksuid40) {
+        printByteArray(ksuid40.asRaw());
     }
 
-    private void printTemplate(final Ksuid ksuid) {
+    private void printTemplate(final Ksuid40 ksuid40) {
         String result = flags.templateText;
-        result = result.replace("{{.String}}", ksuid.toString());
-        result = result.replace("{{.Raw}}", ksuid.asRaw());
-        result = result.replace("{{.Time}}", ksuid.getTime());
-        result = result.replace("{{.Timestamp}}", ksuid.getTimestamp() + "");
-        result = result.replace("{{.Payload}}", ksuid.getPayload());
+        result = result.replace("{{.String}}", ksuid40.toString());
+        result = result.replace("{{.Raw}}", ksuid40.asRaw());
+        result = result.replace("{{.Time}}", ksuid40.getTime());
+        result = result.replace("{{.Timestamp}}", ksuid40.getTimestamp() + "");
+        result = result.replace("{{.Payload}}", ksuid40.getPayload());
         printStream.println(result);
     }
 

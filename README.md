@@ -1,9 +1,6 @@
-# ksuid
+# ksuid40
 
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.ksuid/ksuid/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.ksuid/ksuid)
-[![Javadoc](https://javadoc.io/badge2/com.github.ksuid/ksuid/javadoc.svg)](https://javadoc.io/doc/com.github.ksuid/ksuid)
-
-This is a Java port of [Segment's K-Sortable Globally Unique IDs](https://github.com/segmentio/ksuid).
+This is a Java port of [Segment's K-Sortable Globally Unique IDs](https://github.com/segmentio/ksuid). with 40 bit timestamp and epoch as 0
 
 KSUID is for K-Sortable Unique IDentifier. It's a way to generate globally unique IDs similar to RFC 4122 UUIDs,
 but contain a time component so they can be "roughly" sorted by time of creation.
@@ -23,69 +20,59 @@ For the story of how KSUIDs came about, see [A brief history of the UUID](https:
 To use this as a command-line program on Unix-like systems, run
 
 ```bash
-wget https://repo1.maven.org/maven2/com/github/ksuid/ksuid/1.1.0/ksuid-1.1.0-cli.jar
-sudo mv ksuid-1.1.0-cli.jar /usr/local/bin/ksuid
-sudo chmod +x /usr/local/bin/ksuid
+wget https://repo1.maven.org/maven2/com/github/ksuid40/ksuid40/1.1.0/ksuid40-1.1.0-cli.jar
+sudo mv ksuid40-1.1.0-cli.jar /usr/local/bin/ksuid40
+sudo chmod +x /usr/local/bin/ksuid40
 
-ksuid
+ksuid40
 # prints 1HCpXwx2EK9oYluWbacgeCnFcLf
 ```
 
 ## Usage as library
 
-Add the library to maven pom.xml (or the equivalent in your build system):
-
-```xml
-<dependency>
-    <groupId>com.github.ksuid</groupId>
-    <artifactId>ksuid</artifactId>
-    <version>1.1.0</version>
-</dependency>
-```
-
-Then simply generate a ksuid string like this:
+Then simply generate a ksuid40 string like this:
 
 ```java
-String ksuid = Ksuid.newKsuid().toString();
-System.out.println(ksuid); // prints 1HCpXwx2EK9oYluWbacgeCnFcLf
+String ksuid40 = Ksuid40.newKsuid().toString();
+System.out.println(ksuid40); // prints 1HCpXwx2EK9oYluWbacgeCnFcLf
 
 ```
 
 &nbsp;
 
-For more complex use cases, create a `KsuidGenerator` with a `SecureRandom` and get a new `Ksuid` for use.
+For more complex use cases, create a `40` with a `SecureRandom` and get a new `Ksuid40` for use.
 
-Note that `KsuidGenerator` is threadsafe and `Ksuid` is immutable (and therefore threadsafe).
+Note that `Ksuid40Generator` is threadsafe and `Ksuid40` is immutable (and therefore threadsafe).
 
 ```java
 // Construct a new KsuidGenerator object. Since it is threadsafe you only need one.
-private static final KsuidGenerator KSUID_GENERATOR = new KsuidGenerator(new SecureRandom());
+private static final Ksuid40Generator KSUID_GENERATOR = new Ksuid40Generator(new SecureRandom());
 
 // Get a new Ksuid object.
-final Ksuid ksuid = ksuidGenerator.newKsuid();
+final Ksuid ksuid40 = ksuid40Generator.newKsuid();
 
 // The toString() method is the string representation of KSUID.
-System.out.println("ksuid:\n" + ksuid  + "\n");
+System.out.println("ksuid40:\n" + ksuid40  + "\n");
 
 // The log string format shows some details on one line, suitable for logging.
-System.out.println("ksuid.toLogString():\n" + ksuid.toLogString() + "\n");
+System.out.println("ksuid40.toLogString():\n" + ksuid40.toLogString() + "\n");
 
 // The inspect string format shows details.
-System.out.println("ksuid.toInspectString():\n" + ksuid.toInspectString());
+System.out.println("ksuid40.toInspectString():\n" + ksuid40.toInspectString());
 
 ```
 The output from the code block above is
 
 ```
-ksuid:
+ksuid40:
 1HCpXwx2EK9oYluWbacgeCnFcLf
 
-ksuid.toLogString():
+ksuid40.toLogString():
 Ksuid[timestamp = 150215977, string = 1HCpXwx2EK9oYluWbacgeCnFcLf payload = [124, 76, 43, -110, 116, -6, \
     -91, 45, 0, -125, -127, 109, 28, 24, 28, -17], ksuidBytes = [8, -12, 29, 41, 124, 76, 43, -110, 116, \
     -6, -91, 45, 0, -125, -127, 109, 28, 24, 28, -17]]
 
-ksuid.toInspectString():
+ksuid40.toInspectString():
 REPRESENTATION:
 
   String: 1HCpXwx2EK9oYluWbacgeCnFcLf
@@ -104,7 +91,7 @@ A very rough performance profile for generating KSUIDs was run on a MacBook Pro 
 
 ```java
 public static void main(final String[] args) {
-    final KsuidGenerator generator = new KsuidGenerator(new SecureRandom());
+    final Ksuid40Generator generator = new Ksuid40Generator(new SecureRandom());
     IntStream.range(0, 100).forEach(i -> generator.newKsuid()); // prime the random
 
     IntStream.iterate(1000, operand -> operand * 10)

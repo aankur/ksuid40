@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.ksuid</groupId>
-    <artifactId>ksuid</artifactId>
+    <groupId>com.github.ksuid40</groupId>
+    <artifactId>ksuid40</artifactId>
     <version>1.1.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>ksuid</name>
+    <name>ksuid40</name>
     
     <description>
-        K-Sortable Globally Unique IDs for Java
+        K-Sortable Globally Unique IDs for Java ( 40 bit timestamp )
     </description>
-    <url>https://github.com/ksuid/ksuid</url>
-    <inceptionYear>2021</inceptionYear>
+    <url>https://github.com/aankur/ksuid40</url>
+    <inceptionYear>2022</inceptionYear>
     <organization>
-        <name>ksuid</name>
+        <name>ksuid40</name>
     </organization>
     
     <properties>
@@ -46,7 +46,7 @@
         <!-- Dependency versions -->
         <assertj-core.version>3.19.0</assertj-core.version>
         <equalsverifier.version>2.5.2</equalsverifier.version>
-        <junit.version>4.13.2</junit.version>
+        <junit.version>5.7.2</junit.version>
         <mockito.version>4.3.1</mockito.version>
     </properties>
 
@@ -60,15 +60,15 @@
     </licenses>
 
     <scm>
-        <connection>scm:git:git://github.com/ksuid/ksuid.git</connection>
-        <developerConnection>scm:git:https://github.com/ksuid/ksuid.git</developerConnection>
-        <url>http://github.com/ksuid/ksuid/tree/master</url>
+        <connection>scm:git:git://github.com/aankur/ksuid40.git</connection>
+        <developerConnection>scm:git:https://github.com/aankur/ksuid40.git</developerConnection>
+        <url>http://github.com/aankur/ksuid40/tree/master</url>
         <tag>HEAD</tag>
     </scm>
     
     <developers>
         <developer>
-            <name>ksuid</name>
+            <name>ksuid40</name>
         </developer>
     </developers>
     
@@ -89,8 +89,8 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>

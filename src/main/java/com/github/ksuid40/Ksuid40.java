@@ -1,4 +1,4 @@
-package com.github.ksuid;
+package com.github.ksuid40;
 
 import java.nio.ByteBuffer;
 import java.time.Instant;
@@ -8,41 +8,44 @@ import java.util.Comparator;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-import static com.github.ksuid.Base62.base62Decode;
-import static com.github.ksuid.Base62.base62Encode;
-import static com.github.ksuid.Hex.hexEncode;
+import static com.github.ksuid40.Base62.base62Decode;
+import static com.github.ksuid40.Base62.base62Encode;
+import static com.github.ksuid40.Hex.hexEncode;
 
 /**
  * A K-Sortable Globally Unique ID (KSUID).
  * <p>
- * Using {@link KsuidGenerator} is the recommended way to create Ksuid objects.
+ * Using {@link Ksuid40Generator} is the recommended way to create Ksuid objects.
  * <p>
  * See <a href="https://github.com/segmentio/ksuid">https://github.com/segmentio/ksuid</a>.
  */
 @SuppressWarnings("WeakerAccess")
-public class Ksuid implements Comparable<Ksuid> {
-    static final int EPOCH = 1400000000;
+public class Ksuid40 implements Comparable<Ksuid40> {
+    static final int EPOCH = 0;
     public static final int PAYLOAD_BYTES = 16;
+    public static final int LONG_SIZE_BYTES = 8;
 
-    private static final int TIMESTAMP_BYTES = 4;
-    private static final int TOTAL_BYTES = TIMESTAMP_BYTES + PAYLOAD_BYTES;
-    private static final int PAD_TO_LENGTH = 27;
-    private static final Comparator<Ksuid> COMPARATOR = Comparator.comparingInt(Ksuid::getTimestamp)
-                                                                  .thenComparing(Ksuid::getPayload);
+    private static final int TIMESTAMP_BYTES = 5;
+    public static final int TOTAL_BYTES = TIMESTAMP_BYTES + PAYLOAD_BYTES;
+    private static final int PAD_TO_LENGTH = 28;
+    private static final Comparator<Ksuid40> COMPARATOR = Comparator.comparingLong(Ksuid40::getTimestamp)
+                                                                  .thenComparing(Ksuid40::getPayload);
 
-    private final int timestamp;
+    private final long timestamp;
     private final byte[] payload;
     private final byte[] ksuidBytes;
 
-    private Ksuid(final Builder builder) {
+    private Ksuid40(final Builder builder) {
         if (builder.ksuidBytes != null) {
-            if (builder.ksuidBytes.length != TOTAL_BYTES) {
-                throw new IllegalArgumentException("ksuid is not expected length of " + TOTAL_BYTES + " bytes");
+            if (builder.ksuidBytes.length < (PAYLOAD_BYTES + 4) ||  builder.ksuidBytes.length > TOTAL_BYTES) {
+                throw new IllegalArgumentException("ksuid is not expected length of " + TOTAL_BYTES + " ( 20-21 ) bytes");
             }
-
-            ksuidBytes = builder.ksuidBytes;
+            ksuidBytes = new byte[TOTAL_BYTES];
+            System.arraycopy(builder.ksuidBytes, 0, ksuidBytes, TOTAL_BYTES - builder.ksuidBytes.length, builder.ksuidBytes.length);
             final ByteBuffer byteBuffer = ByteBuffer.wrap(ksuidBytes);
-            timestamp = byteBuffer.getInt();
+            byte[] timeStampBytes = new byte[LONG_SIZE_BYTES];
+            byteBuffer.get(timeStampBytes, LONG_SIZE_BYTES - TIMESTAMP_BYTES, TIMESTAMP_BYTES);
+            timestamp = ByteBuffer.wrap(timeStampBytes, 0, LONG_SIZE_BYTES).getLong();
             payload = new byte[PAYLOAD_BYTES];
             byteBuffer.get(payload);
         } else {
@@ -51,16 +54,20 @@ public class Ksuid implements Comparable<Ksuid> {
             }
 
             timestamp = builder.timestamp;
+
+            byte[] timeStampBytes = new byte[LONG_SIZE_BYTES];
+            ByteBuffer.wrap(timeStampBytes).putLong(timestamp);
+
             payload = builder.payload;
             ksuidBytes = ByteBuffer.allocate(TOTAL_BYTES)
-                                   .putInt(timestamp)
+                                   .put(timeStampBytes, LONG_SIZE_BYTES - TIMESTAMP_BYTES, TIMESTAMP_BYTES)
                                    .put(payload)
                                    .array();
         }
     }
 
     /**
-     * A builder to create a {@link Ksuid}.
+     * A builder to create a {@link Ksuid40}.
      *
      * @return builder
      */
@@ -76,8 +83,8 @@ public class Ksuid implements Comparable<Ksuid> {
      *
      * @return  A randomly generated {@code Ksuid}
      */
-    public static Ksuid newKsuid() {
-        return KsuidGenerator.createKsuid();
+    public static Ksuid40 newKsuid() {
+        return Ksuid40Generator.createKsuid();
     }
     
     /**
@@ -89,7 +96,7 @@ public class Ksuid implements Comparable<Ksuid> {
      *
      * @return  A {@code Ksuid} with the specified value
      */
-    public static Ksuid fromString(final String ksuidString) {
+    public static Ksuid40 fromString(final String ksuidString) {
         return new Builder()
                 .withKsuidString(ksuidString)
                 .build();
@@ -157,7 +164,7 @@ public class Ksuid implements Comparable<Ksuid> {
      *
      * @return KSUID timestamp component
      */
-    public int getTimestamp() {
+    public long getTimestamp() {
         return timestamp;
     }
 
@@ -215,11 +222,11 @@ public class Ksuid implements Comparable<Ksuid> {
         if (this == o) {
             return true;
         }
-        if (!(o instanceof Ksuid)) {
+        if (!(o instanceof Ksuid40)) {
             return false;
         }
 
-        final Ksuid that = (Ksuid) o;
+        final Ksuid40 that = (Ksuid40) o;
 
         return Objects.equals(this.timestamp, that.timestamp) &&
                 Arrays.equals(this.payload, that.payload) &&
@@ -245,18 +252,18 @@ public class Ksuid implements Comparable<Ksuid> {
     }
 
     @Override
-    public int compareTo(@SuppressWarnings("NullableProblems") final Ksuid other) {
+    public int compareTo(@SuppressWarnings("NullableProblems") final Ksuid40 other) {
         return COMPARATOR.compare(this, other);
     }
 
 
     /**
-     * Builder to create a {@link Ksuid}.
+     * Builder to create a {@link Ksuid40}.
      * <p>
-     * Get a Builder using {@link Ksuid#newBuilder() Ksuid.newBuilder()}.
+     * Get a Builder using {@link Ksuid40#newBuilder() Ksuid.newBuilder()}.
      */
     public static final class Builder {
-        private int timestamp;
+        private long timestamp;
         private byte[] payload;
         private byte[] ksuidBytes;
 
@@ -271,7 +278,7 @@ public class Ksuid implements Comparable<Ksuid> {
          * @param timestamp the timestamp component
          * @return this builder
          */
-        public Builder withTimestamp(final int timestamp) {
+        public Builder withTimestamp(final long timestamp) {
             this.timestamp = timestamp;
             return this;
         }
@@ -316,14 +323,14 @@ public class Ksuid implements Comparable<Ksuid> {
         }
 
         /**
-         * Build a {@link Ksuid} instance.
+         * Build a {@link Ksuid40} instance.
          * <p>
          * You must have specified either KSUID bytes, KSUID string, or a timestamp and payload.
          *
-         * @return a new {@link Ksuid} instance
+         * @return a new {@link Ksuid40} instance
          */
-        public Ksuid build() {
-            return new Ksuid(this);
+        public Ksuid40 build() {
+            return new Ksuid40(this);
         }
     }
 
