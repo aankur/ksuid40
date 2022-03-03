@@ -59,31 +59,31 @@ public class MainTest {
     public void testGenerateOne() {
         final RunResult runResult = runMain();
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("0Dz40rGb7Ea16c6dXiXv3p5w2yfq\n");
+        assertThat(runResult.stdout).isEqualTo("00Dz40rGb7Ea16c6dXiXv3p5w2yfq\n");
     }
 
     @Test
     public void testGenerateThree() {
         final RunResult runResult = runMain("-n", "3");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("0Dz40rGb7Ea16c6dXiXv3p5w2yfq\n"
-                + "0Dz40rLqt4fKkTWaI45taSxaU2yC\n"
-                + "0Dz40rKJa37f8reL0CFGgthinFK2\n");
+        assertThat(runResult.stdout).isEqualTo("00Dz40rGb7Ea16c6dXiXv3p5w2yfq\n"
+                + "00Dz40rLqt4fKkTWaI45taSxaU2yC\n"
+                + "00Dz40rKJa37f8reL0CFGgthinFK2\n");
     }
 
     @Test
     public void testPositionalArgsNoFlags() {
         final RunResult runResult = runMain("024rUCafWbTglyvWlQEuaxKqqiuY", "024rUCfvIRZ0PqLTVlmt7bCVHnCu");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("024rUCafWbTglyvWlQEuaxKqqiuY\n"
-                + "024rUCfvIRZ0PqLTVlmt7bCVHnCu\n");
+        assertThat(runResult.stdout).isEqualTo("0024rUCafWbTglyvWlQEuaxKqqiuY\n"
+                + "0024rUCfvIRZ0PqLTVlmt7bCVHnCu\n");
     }
 
     @Test
     public void testVerbose() {
         final RunResult runResult = runMain("-v", "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("024rUCafWbTglyvWlQEuaxKqqiuY: 024rUCafWbTglyvWlQEuaxKqqiuY\n");
+        assertThat(runResult.stdout).isEqualTo("0024rUCafWbTglyvWlQEuaxKqqiuY: 0024rUCafWbTglyvWlQEuaxKqqiuY\n");
     }
 
     @Test
@@ -92,7 +92,7 @@ public class MainTest {
         assertThat(runResult.exitCode).isZero();
         assertThat(runResult.stdout).isEqualTo("REPRESENTATION:\n"
                 + "\n"
-                + "  String: 024rUCafWbTglyvWlQEuaxKqqiuY\n"
+                + "  String: 0024rUCafWbTglyvWlQEuaxKqqiuY\n"
                 + "     Raw: 000E9110E816D1D7403226FA924557DA9B3A0F4642\n"
                 + "\n"
                 + "COMPONENTS:\n"
@@ -139,7 +139,7 @@ public class MainTest {
         final String templateText = "string={{.String}} raw={{.Raw} time={{.Time}} timestamp={{.Timestamp} payload={{.Payload}}";
         final RunResult runResult = runMain("-f", "template", "-t", templateText, "0000024rUCafWbTglyvWlQEuaxKqqiuY");
         assertThat(runResult.exitCode).isZero();
-        assertThat(runResult.stdout).isEqualTo("string=024rUCafWbTglyvWlQEuaxKqqiuY raw={{.Raw} time=1977-09-29 13:34:32 +0000 UTC "
+        assertThat(runResult.stdout).isEqualTo("string=0024rUCafWbTglyvWlQEuaxKqqiuY raw={{.Raw} time=1977-09-29 13:34:32 +0000 UTC "
                 + "timestamp={{.Timestamp} payload=16D1D7403226FA924557DA9B3A0F4642\n"
                 + "");
     }

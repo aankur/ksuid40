@@ -1,6 +1,6 @@
 # ksuid40
 
-This is a Java port of [Segment's K-Sortable Globally Unique IDs](https://github.com/segmentio/ksuid). with 40 bit timestamp and epoch as 1 January 1970 UTC 00:00:00 and 28 bytes long
+This is a Java port of [Segment's K-Sortable Globally Unique IDs](https://github.com/segmentio/ksuid). with 40 bit timestamp and epoch as 1 January 1970 UTC 00:00:00 and 29 bytes long
 
 KSUID is for K-Sortable Unique IDentifier. It's a way to generate globally unique IDs similar to RFC 4122 UUIDs,
 but contain a time component so they can be "roughly" sorted by time of creation.

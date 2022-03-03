@@ -63,6 +63,6 @@ public class Ksuid40GeneratorTest {
 
     @Test
     public void testGenerate() {
-        assertThat(Ksuid40Generator.generate()).matches("[0-9a-zA-Z]{28}");
+        assertThat(Ksuid40Generator.generate()).matches("[0-9a-zA-Z]{29}");
     }
 }

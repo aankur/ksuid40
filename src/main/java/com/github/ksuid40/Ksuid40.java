@@ -28,7 +28,7 @@ public class Ksuid40 implements Serializable, Comparable<Ksuid40> {
 
     private static final int TIMESTAMP_BYTES = 5;
     public static final int TOTAL_BYTES = TIMESTAMP_BYTES + PAYLOAD_BYTES;
-    private static final int PAD_TO_LENGTH = 28;
+    private static final int PAD_TO_LENGTH = 29;
     private static final Comparator<Ksuid40> COMPARATOR = Comparator.comparingLong(Ksuid40::getTimestamp)
                                                                   .thenComparing(Ksuid40::getPayload);
 

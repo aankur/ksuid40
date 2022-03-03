@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
@@ -26,7 +27,7 @@ public class Ksuid40Test {
     private static final byte[] PAYLOAD_BYTES = Hex.hexDecode(PAYLOAD_RAW);
     private static final String KSUID_RAW = "000669F7EF" + PAYLOAD_RAW;
     private static final byte[] KSUID_BYTES = Hex.hexDecode(KSUID_RAW);
-    private static final String KSUID_STRING = "00ujtsYcgvSTl8PAuAdqWYSMnLOv";
+    private static final String KSUID_STRING = "000ujtsYcgvSTl8PAuAdqWYSMnLOv";
     private static final long TIMESTAMP = 107608047;
     private static final int EPOCH = 0;
     private static final Instant INSTANT = Instant.ofEpochSecond((long) TIMESTAMP + EPOCH);
@@ -136,7 +137,7 @@ public class Ksuid40Test {
     @ParameterizedTest
     @MethodSource("ksuidProvider")
     public void testToLogString(final Ksuid40 ksuid40) {
-        assertThat(ksuid40.toLogString()).isEqualTo("Ksuid40[string = 00ujtsYcgvSTl8PAuAdqWYSMnLOv"  +
+        assertThat(ksuid40.toLogString()).isEqualTo("Ksuid40[string = 000ujtsYcgvSTl8PAuAdqWYSMnLOv"  +
                                                        ", timestamp = " + TIMESTAMP +
                                                        ", payload = [-75, -95, -51, 52, -75, -7, -99, 17, 84, -5, 104, 83, 52, 92, -105, 53]" +
                                                        ", ksuidBytes = [0, 6, 105, -9, -17, -75, -95, -51, 52, -75, -7, -99, 17, 84, -5, 104, 83, 52, 92, -105, 53]]");
